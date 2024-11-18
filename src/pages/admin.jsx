@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { getAuth, signOut } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { alterarDadosUsuario } from "../utils/authutils"; 
 import { deleteDoc, doc, getFirestore, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 export const AdminPage = () => {
     const [adminNumero, setAdminNumero] = useState("");
@@ -11,16 +12,28 @@ export const AdminPage = () => {
     const [novoEmail, setNovoEmail] = useState("");
     const [novaSenha, setNovaSenha] = useState("");
     const [mensagemAlteracao, setMensagemAlteracao] = useState("");
-    const [senhaAtual, setSenhaAtual] = useState("");  
+    const [senhaAtual, setSenhaAtual] = useState("");
+    const [usuarioLogado, setUsuarioLogado] = useState(null);
 
     const db = getFirestore();
-
     const auth = getAuth();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "/login"; 
+            } else {
+                setUsuarioLogado(user); 
+            }
+        });
+
+        return () => unsubscribe();
+    }, [auth]);
 
     const logout = async () => {
         try {
             await signOut(auth);
-            window.location.href = "/"; 
+            navigate("/"); 
         } catch (error) {
             console.error("Erro ao deslogar: ", error.message);
         }
@@ -38,7 +51,6 @@ export const AdminPage = () => {
         setMensagemAlteracao("");
     };
 
-    // Função para alterar o e-mail e a senha do usuário
     const alterarDados = async () => {
         try {
             const mensagem = await alterarDadosUsuario(auth, novoEmail, novaSenha, senhaAtual);
@@ -49,18 +61,15 @@ export const AdminPage = () => {
         }
     };
 
-     // Função para definir o número sorteado
-     const setNumeroAdmin = async () => {
+    const setNumeroAdmin = async () => {
         if (adminNumero) {
             const docRef = doc(db, "sorteio", "numeroSorteado");
             await setDoc(docRef, { numero: parseInt(adminNumero) });
             setAdminMensagem("Número sorteado definido com sucesso!");
             setIsNumeroDefinido(true);
-            console.log("Número definido: ", adminNumero);
         }
     };
 
-    // Função para tirar o número definido
     const tirarNumeroDefinido = async () => {
         const docRef = doc(db, "sorteio", "numeroSorteado");
         await deleteDoc(docRef);
@@ -85,7 +94,6 @@ export const AdminPage = () => {
 
             <button onClick={abrirModal} className="admin-button">Alterar E-mail e Senha</button>
 
-            {/* Modal de Alteração */}
             {isModalOpen && (
                 <div className="admin-modal">
                     <div className="admin-modal-content">

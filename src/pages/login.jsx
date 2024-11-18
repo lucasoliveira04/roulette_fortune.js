@@ -7,25 +7,24 @@ export const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [mensagem, setMensagem] = useState("");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         if (!email || !senha) {
-            setMensagem("Preencha todos os campos!")
-            return
+            setMensagem("Preencha todos os campos!");
+            return;
         }
 
         try {
-            await signInWithEmailAndPassword(auth, email, senha)
-            setMensagem("Login realizado com sucesso!")
-            navigate("/admin")
-        } catch (error){
-            setMensagem("Email ou senha inválidos!")
+            await signInWithEmailAndPassword(auth, email, senha);
+            setMensagem("Login realizado com sucesso!");
+            navigate("/admin");
+        } catch (error) {
+            setMensagem("Email ou senha inválidos!");
         }
-
-    }
+    };
 
     return (
         <div className="login-container">
@@ -53,5 +52,5 @@ export const LoginPage = () => {
                 {mensagem && <p className="login-message">{mensagem}</p>}
             </form>
         </div>
-    )
-}
+    );
+};
