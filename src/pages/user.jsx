@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { firebaseApp } from "../services/firebase";
 
@@ -14,23 +14,33 @@ export const UserPage = () => {
     const [mostrarInputsPersonalizados, setMostrarInputsPersonalizados] = useState(false);
     const db = getFirestore(firebaseApp);
 
-    // Função para buscar o número sorteado ou gerar um novo
+    // Função para gerar e armazenar o número sorteado
+    const gerarNumeroSorteado = async () => {
+        const numeroSorteado = Math.floor(Math.random() * fimIntervalo) + inicioIntervalo;
+        const docRef = doc(db, "sorteio", "numeroSorteado");
+        await setDoc(docRef, { numero: numeroSorteado }); // Armazena o novo número no Firestore
+        setNumero(numeroSorteado); // Atualiza o número sorteado na interface
+    };
+
+    // Função para buscar o número sorteado do Firestore
     const buscarNumeroSorteado = async () => {
         const docRef = doc(db, "sorteio", "numeroSorteado");
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            setNumero(docSnap.data().numero);
+            setNumero(docSnap.data().numero); // Atualiza o número sorteado na interface
         } else {
-            const numeroSorteado = Math.floor(Math.random() * fimIntervalo) + inicioIntervalo;
-            await setDoc(docRef, { numero: numeroSorteado }); 
-            setNumero(numeroSorteado); 
+            // Caso não haja um número sorteado, gere um novo número
+            await gerarNumeroSorteado();
         }
     };
 
-    // Função para o sorteio de número
+    // Função chamada ao clicar em "Sortear"
     const sortearNumero = async () => {
-        await buscarNumeroSorteado();
+        // Gera um novo número sorteado e o armazena no Firestore
+        await gerarNumeroSorteado();
+
+        // Verifica se o número digitado pelo usuário corresponde ao número sorteado
         if (parseInt(inputNumero) === numero) {
             setMensagem("Parabéns, você acertou o número!");
         } else {
@@ -38,7 +48,7 @@ export const UserPage = () => {
         }
     };
 
-    // Função para definir o intervalo de números
+    // Função para alterar o intervalo
     const handleIntervaloChange = (event) => {
         const novoIntervalo = event.target.value;
         setIntervaloEscolhido(novoIntervalo);
@@ -55,7 +65,7 @@ export const UserPage = () => {
         }
     };
 
-    // Função para definir o intervalo
+    // Função para definir o intervalo de números
     const definirIntervalo = () => {
         if (inicioIntervalo >= fimIntervalo) {
             setMensagem("Erro: O número de início deve ser menor que o de fim.");
