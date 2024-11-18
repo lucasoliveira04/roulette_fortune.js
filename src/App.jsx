@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { firebaseApp } from "./services/firebase";
 
 function App() {
@@ -7,44 +7,51 @@ function App() {
   const [inputNumero, setInputNumero] = useState(""); 
   const [adminNumero, setAdminNumero] = useState("");
   const [mensagem, setMensagem] = useState(""); 
-  const [isAdminMode, setIsAdminMode] = useState(false);  
+  const [isNumeroDefinido, setIsNumeroDefinido] = useState(false); // Marca se o número foi definido pelo admin
 
-  const db = getFirestore(firebaseApp);
+  const db = getFirestore(firebaseApp)
 
+  // Função para buscar o número sorteado do Firestore
   const buscarNumeroSorteado = async () => {
     const docRef = doc(db, "sorteio", "numeroSorteado");
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      setNumero(docSnap.data().numero); 
+      setNumero(docSnap.data().numero);
+      setIsNumeroDefinido(true);
     } else {
-      console.log("No such document!");
+      setNumero(Math.floor(Math.random() * 10)); // Sorteia um número aleatório se não houver número definido
+      setIsNumeroDefinido(false);
     }
   };
 
-  
+  // Função para definir o número do sorteio
   const setNumeroAdmin = async () => {
     if (adminNumero) {
       const docRef = doc(db, "sorteio", "numeroSorteado");
       await setDoc(docRef, { numero: parseInt(adminNumero) });
-      setMensagem("Número sorteado com sucesso!");
-      setIsAdminMode(false); 
-      setAdminNumero(""); 
+      setMensagem("Número sorteado definido com sucesso!");
+      setIsNumeroDefinido(true);
+      
+      // Exibe no console o número definido
+      console.log("Número definido: ", adminNumero);
     }
   };
 
+  // Função para remover o número definido e voltar ao sorteio normal
+  const tirarNumeroDefinido = async () => {
+    const docRef = doc(db, "sorteio", "numeroSorteado");
+    await deleteDoc(docRef); // Remove o número do Firestore
+    setMensagem("Sorteio voltou ao normal!");
+    setIsNumeroDefinido(false);
+    buscarNumeroSorteado(); // Refaz a busca para retornar ao sorteio aleatório
+  };
+
+  // Função para realizar o sorteio
   const sortearNumero = async () => {
-    let numeroSorteado;
+    await buscarNumeroSorteado();
 
-    if (adminNumero) {
-      numeroSorteado = parseInt(adminNumero);
-    } else {
-      numeroSorteado = Math.floor(Math.random() * 10);
-    }
-
-    setNumero(numeroSorteado);
-
-    if (parseInt(inputNumero) === numeroSorteado) {
+    if (parseInt(inputNumero) === numero) {
       setMensagem("Parabéns, você acertou o número!");
     } else {
       setMensagem("Infelizmente você errou o número!");
@@ -54,28 +61,30 @@ function App() {
   return (
     <>
       <h2>Número Sorteado: {numero}</h2>
-      <input
-        type="number"
-        name="Coloque o número"
-        onChange={(e) => setInputNumero(e.target.value)}
-      />
-      <button onClick={sortearNumero}>Sortear</button>
-      <p>{mensagem}</p>
 
-      <h3>Admin: Alterar número sorteado</h3>
-      {isAdminMode ? (
-        <>
-          <input
-            type="number"
-            placeholder="Digite o número do admin"
-            value={adminNumero}
-            onChange={(e) => setAdminNumero(e.target.value)}
-          />
-          <button onClick={setNumeroAdmin}>Atualizar Sorteio</button>
-        </>
-      ) : (
-        <button onClick={() => setIsAdminMode(true)}>Ativar Modo Admin</button>
-      )}
+      <div>
+        <input 
+          type="number" 
+          placeholder="Digite seu número" 
+          onChange={(e) => setInputNumero(e.target.value)} 
+        />
+        <button onClick={sortearNumero}>Sortear</button>
+        <p>{mensagem}</p>
+      </div>
+
+      {/* Admin Control */}
+      <div>
+        <h3>Admin: Alterar número sorteado</h3>
+        <input
+          type="number"
+          placeholder="Definir número do sorteio"
+          value={adminNumero}
+          onChange={(e) => setAdminNumero(e.target.value)}
+        />
+        <button onClick={setNumeroAdmin}>Definir número do sorteio</button>
+        <button onClick={tirarNumeroDefinido}>Tirar número definido</button>
+        <p>{isNumeroDefinido ? "Número definido pelo admin." : "Sorteio aleatório em andamento."}</p>
+      </div>
     </>
   );
 }
