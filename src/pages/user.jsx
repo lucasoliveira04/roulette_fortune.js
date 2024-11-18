@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseApp } from "../services/firebase";
 
 export const UserPage = () => {
@@ -11,36 +11,25 @@ export const UserPage = () => {
     const [fimIntervalo, setFimIntervalo] = useState(100);
     const [intervaloDefinido, setIntervaloDefinido] = useState(false);
     const [mostrarBotaoDefinir, setMostrarBotaoDefinir] = useState(true);
-    const [mostrarInputsPersonalizados, setMostrarInputsPersonalizados] = useState(false);
+    const [mostrarInputsPersonalizados, setMostrarInputsPersonalizados] = useState(false); 
     const db = getFirestore(firebaseApp);
 
-    // Função para gerar e armazenar o número sorteado
-    const gerarNumeroSorteado = async () => {
-        const numeroSorteado = Math.floor(Math.random() * fimIntervalo) + inicioIntervalo;
-        const docRef = doc(db, "sorteio", "numeroSorteado");
-        await setDoc(docRef, { numero: numeroSorteado }); // Armazena o novo número no Firestore
-        setNumero(numeroSorteado); // Atualiza o número sorteado na interface
-    };
-
-    // Função para buscar o número sorteado do Firestore
+    // Função para buscar o número sorteado
     const buscarNumeroSorteado = async () => {
         const docRef = doc(db, "sorteio", "numeroSorteado");
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            setNumero(docSnap.data().numero); // Atualiza o número sorteado na interface
+            setNumero(docSnap.data().numero);
         } else {
-            // Caso não haja um número sorteado, gere um novo número
-            await gerarNumeroSorteado();
+            setNumero(Math.floor(Math.random() * fimIntervalo) + inicioIntervalo); 
         }
     };
 
-    // Função chamada ao clicar em "Sortear"
-    const sortearNumero = async () => {
-        // Gera um novo número sorteado e o armazena no Firestore
-        await gerarNumeroSorteado();
 
-        // Verifica se o número digitado pelo usuário corresponde ao número sorteado
+    const sortearNumero = async () => {
+        await buscarNumeroSorteado();
+
         if (parseInt(inputNumero) === numero) {
             setMensagem("Parabéns, você acertou o número!");
         } else {
@@ -48,24 +37,24 @@ export const UserPage = () => {
         }
     };
 
-    // Função para alterar o intervalo
+   
     const handleIntervaloChange = (event) => {
         const novoIntervalo = event.target.value;
         setIntervaloEscolhido(novoIntervalo);
-        setMostrarBotaoDefinir(true);
+        setMostrarBotaoDefinir(true); 
 
         if (novoIntervalo === "custom") {
-            setMostrarInputsPersonalizados(true);
+            setMostrarInputsPersonalizados(true); 
             setInicioIntervalo(1);
             setFimIntervalo(100);
         } else {
-            setMostrarInputsPersonalizados(false);
+            setMostrarInputsPersonalizados(false); 
             setInicioIntervalo(1);
             setFimIntervalo(Number(novoIntervalo));
         }
     };
 
-    // Função para definir o intervalo de números
+    // Função para definir o intervalo
     const definirIntervalo = () => {
         if (inicioIntervalo >= fimIntervalo) {
             setMensagem("Erro: O número de início deve ser menor que o de fim.");
@@ -79,16 +68,16 @@ export const UserPage = () => {
 
     // Função para alterar o intervalo
     const alterarIntervalo = () => {
-        setIntervaloDefinido(false);
-        setMostrarBotaoDefinir(true);
+        setIntervaloDefinido(false); 
+        setMostrarBotaoDefinir(true); 
         setMensagem("Intervalo alterado. Escolha um novo intervalo.");
-        setMostrarInputsPersonalizados(false);
+        setMostrarInputsPersonalizados(false); 
     };
 
     return (
         <div>
             <h2>{intervaloDefinido ? `Número Sorteado: ${numero}` : "Defina um intervalo"}</h2>
-
+            
             {/* Mensagem inicial */}
             <div>
                 <p>{mensagem}</p>
@@ -106,7 +95,7 @@ export const UserPage = () => {
                         <option value="100">1 - 100</option>
                         <option value="50">1 - 50</option>
                         <option value="30">1 - 30</option>
-                        <option value="15">1 - 15</option>
+                        <option value="30">1 - 15</option>
                         <option value="custom">Customizado</option>
                     </select>
                 </div>
@@ -142,7 +131,7 @@ export const UserPage = () => {
                         onChange={(e) => setInputNumero(e.target.value)}
                     />
                     <button onClick={sortearNumero}>Sortear</button>
-                    <button onClick={alterarIntervalo}>Alterar Intervalo</button>
+                    <button onClick={alterarIntervalo}>Alterar Intervalo</button> 
                 </div>
             )}
         </div>
