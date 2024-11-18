@@ -3,7 +3,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseApp } from "../services/firebase";
 
 export const UserPage = () => {
-    const [numero, setNumero] = useState(0);
+    const [numero, setNumero] = useState(null);
     const [inputNumero, setInputNumero] = useState("");
     const [mensagem, setMensagem] = useState("");
     const [isNumeroDefinido, setIsNumeroDefinido] = useState(false);
@@ -33,9 +33,6 @@ export const UserPage = () => {
         }
     };
 
-    useEffect(() => {
-        buscarNumeroSorteado(); 
-    }, []);
 
     return (
         <div>
@@ -50,8 +47,6 @@ export const UserPage = () => {
                 <button onClick={sortearNumero}>Sortear</button>
                 <p className={mensagem.includes("acertou") ? "success" : "error"}>{mensagem}</p>
             </div>
-
-            <p>{isNumeroDefinido ? "Número definido pelo admin." : "Sorteio aleatório em andamento."}</p>
         </div>
     );
 };
