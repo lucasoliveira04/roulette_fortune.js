@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { alterarDadosUsuario } from "../utils/authutils"; 
 import { deleteDoc, doc, getFirestore, setDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 
 export const AdminPage = () => {
     const [adminNumero, setAdminNumero] = useState("");
