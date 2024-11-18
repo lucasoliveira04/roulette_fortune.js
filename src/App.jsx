@@ -1,63 +1,81 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { firebaseApp } from "./services/firebase";
 
 function App() {
-  const [numero, setNumero] = useState(0); // Número sorteado
-  const [inputNumero, setInputNumero] = useState(""); // Número do usuário
-  const [adminNumero, setAdminNumero] = useState(""); // Número definido pelo admin
-  const [mensagem, setMensagem] = useState(""); // Mensagem de feedback
+  const [numero, setNumero] = useState(0);
+  const [inputNumero, setInputNumero] = useState(""); 
+  const [adminNumero, setAdminNumero] = useState("");
+  const [mensagem, setMensagem] = useState(""); 
+  const [isAdminMode, setIsAdminMode] = useState(false);  
 
-  const sortearNumero = () => {
-    let novoNumero;
+  const db = getFirestore(firebaseApp);
 
-    // Verifica se o admin forneceu um número
-    if (adminNumero) {
-      novoNumero = parseInt(adminNumero); // Usa o número fornecido pelo admin
+  const buscarNumeroSorteado = async () => {
+    const docRef = doc(db, "sorteio", "numeroSorteado");
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      setNumero(docSnap.data().numero); 
     } else {
-      novoNumero = Math.floor(Math.random() * 10); // Sorteia um número aleatório
+      console.log("No such document!");
+    }
+  };
+
+  
+  const setNumeroAdmin = async () => {
+    if (adminNumero) {
+      const docRef = doc(db, "sorteio", "numeroSorteado");
+      await setDoc(docRef, { numero: parseInt(adminNumero) });
+      setMensagem("Número sorteado com sucesso!");
+      setIsAdminMode(false); 
+      setAdminNumero(""); 
+    }
+  };
+
+  const sortearNumero = async () => {
+    let numeroSorteado;
+
+    if (adminNumero) {
+      numeroSorteado = parseInt(adminNumero);
+    } else {
+      numeroSorteado = Math.floor(Math.random() * 10);
     }
 
-    setNumero(novoNumero);
+    setNumero(numeroSorteado);
 
-    // Compara o número digitado pelo usuário com o número sorteado
-    if (parseInt(inputNumero) === novoNumero) {
-      setMensagem("Parabéns, você acertou!");
+    if (parseInt(inputNumero) === numeroSorteado) {
+      setMensagem("Parabéns, você acertou o número!");
     } else {
-      setMensagem(`Que pena! O número sorteado foi ${novoNumero}.`);
+      setMensagem("Infelizmente você errou o número!");
     }
   };
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "10px",
-        }}
-      >
-        <div>
-          <h2>Sorteio</h2>
-          <input
-            type="number"
-            placeholder="Coloque o número"
-            value={inputNumero}
-            onChange={(e) => setInputNumero(e.target.value)} 
-          />
-          <button onClick={sortearNumero}>Sortear</button>
-          <p>{mensagem}</p>
-        </div>
+      <h2>Número Sorteado: {numero}</h2>
+      <input
+        type="number"
+        name="Coloque o número"
+        onChange={(e) => setInputNumero(e.target.value)}
+      />
+      <button onClick={sortearNumero}>Sortear</button>
+      <p>{mensagem}</p>
 
-        <div>
-          <h2>Input Admin</h2>
+      <h3>Admin: Alterar número sorteado</h3>
+      {isAdminMode ? (
+        <>
           <input
             type="number"
-            placeholder="Número sorteado pelo admin"
+            placeholder="Digite o número do admin"
             value={adminNumero}
-            onChange={(e) => setAdminNumero(e.target.value)} 
+            onChange={(e) => setAdminNumero(e.target.value)}
           />
-        </div>
-      </div>
+          <button onClick={setNumeroAdmin}>Atualizar Sorteio</button>
+        </>
+      ) : (
+        <button onClick={() => setIsAdminMode(true)}>Ativar Modo Admin</button>
+      )}
     </>
   );
 }
