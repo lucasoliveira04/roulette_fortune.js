@@ -1,11 +1,15 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../services/firebase";
 
 export const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [mensagem, setMensagem] = useState("");
+    const navigate = useNavigate()
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault()
 
         if (!email || !senha) {
@@ -13,11 +17,14 @@ export const LoginPage = () => {
             return
         }
 
-        if (email === "user" && senha === "user") {
-            setMensagem("Login efetuado com sucesso!")
-        } else {
-            setMensagem("Usuário ou senha inválidos!")
+        try {
+            await signInWithEmailAndPassword(auth, email, senha)
+            setMensagem("Login realizado com sucesso!")
+            navigate("/admin")
+        } catch (error){
+            setMensagem("Email ou senha inválidos!")
         }
+
     }
 
     return (

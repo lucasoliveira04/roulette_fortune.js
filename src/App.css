@@ -72,6 +72,8 @@ p.success {
     color: #27ae60;
 }
 
+
+
 .login-container {
     display: flex;
     justify-content: center;
@@ -118,3 +120,77 @@ p.success {
     color: red;
     font-size: 14px;
 }
+
+/* Estilos principais da tela de registro */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f4f8;
+}
+
+.register-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.register-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.register-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.register-input:focus {
+    border-color: #5c67f2;
+    outline: none;
+}
+
+.input-error {
+    border-color: #e74c3c;
+}
+
+.register-button {
+    background-color: #5c67f2;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+    background-color: #4a54e1;
+}
+
+.register-message {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.message-success {
+    color: #2ecc71;
+}
+
+.message-error {
+    color: #e74c3c;
+}
+
