@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { auth, createUserWithEmailAndPassword } from "../services/firebase"; 
+import { auth, createUserWithEmailAndPassword } from "../services/firebase";
+import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 
 export const RegistroPage = () => {
     const [email, setEmail] = useState("");
@@ -16,27 +17,22 @@ export const RegistroPage = () => {
             return;
         }
 
-        // Verificar se a senha tem pelo menos 6 caracteres
         if (senha.length < 6) {
             setMensagem("A senha deve ter pelo menos 6 caracteres.");
             setErro(true);
             return;
         }
 
-        // Criação de usuário com email e senha no Firebase
         createUserWithEmailAndPassword(auth, email, senha)
             .then((userCredential) => {
-                const user = userCredential.user;
                 setMensagem("Conta criada com sucesso! Bem-vindo!");
                 setErro(false);
-                console.log("Usuário registrado: ", user);
-                window.location.href = "/login"; 
+                setTimeout(() => (window.location.href = "/login"), 1500);
             })
             .catch((error) => {
                 const errorCode = error.code;
                 let errorMessage = error.message;
 
-                // Filtrando os erros específicos
                 if (errorCode === "auth/email-already-in-use") {
                     errorMessage = "Este e-mail já está em uso. Tente outro.";
                 } else if (errorCode === "auth/weak-password") {
@@ -47,38 +43,48 @@ export const RegistroPage = () => {
 
                 setMensagem(errorMessage);
                 setErro(true);
-                console.error("Erro no registro: ", errorCode, errorMessage);
             });
     };
 
     return (
-        <div className="register-container">
-            <form onSubmit={handleRegister} className="register-form">
-                <h2 className="register-title">Crie sua Conta</h2>
+        <Container className="vh-100 d-flex justify-content-center align-items-center">
+            <Card style={{ maxWidth: "400px", width: "100%" }} className="shadow p-4">
+                <h2 className="text-center mb-4">Crie sua Conta</h2>
+                {mensagem && <Alert variant={erro ? "danger" : "success"}>{mensagem}</Alert>}
+                <Form onSubmit={handleRegister}>
+                    <Form.Group controlId="email" className="mb-3">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                            type="email"
+                            placeholder="Digite seu e-mail"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            isInvalid={erro && !email}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            O campo de email é obrigatório.
+                        </Form.Control.Feedback>
+                    </Form.Group>
 
-                <input
-                    type="email"
-                    className={`register-input ${erro && !email ? "input-error" : ""}`}
-                    placeholder="Digite seu e-mail"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                    type="password"
-                    className={`register-input ${erro && !senha ? "input-error" : ""}`}
-                    placeholder="Crie uma senha"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                />
+                    <Form.Group controlId="senha" className="mb-3">
+                        <Form.Label>Senha</Form.Label>
+                        <Form.Control
+                            type="password"
+                            placeholder="Crie uma senha"
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
+                            isInvalid={erro && senha.length < 6}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            A senha deve ter pelo menos 6 caracteres.
+                        </Form.Control.Feedback>
+                    </Form.Group>
 
-                <button type="submit" className="register-button">Registrar</button>
-
-                {mensagem && (
-                    <p className={`register-message ${erro ? "message-error" : "message-success"}`}>
-                        {mensagem}
-                    </p>
-                )}
-            </form>
-        </div>
+                    <Button type="submit" variant="primary" className="w-100">
+                        Registrar
+                    </Button>
+                </Form>
+            </Card>
+        </Container>
     );
 };

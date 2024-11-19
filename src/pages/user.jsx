@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseApp } from "../services/firebase";
+import { Container, Row, Col, Form, Button, Alert, InputGroup } from "react-bootstrap";
 
 export const UserPage = () => {
     const [numero, setNumero] = useState("");
@@ -11,10 +12,22 @@ export const UserPage = () => {
     const [fimIntervalo, setFimIntervalo] = useState(100);
     const [intervaloDefinido, setIntervaloDefinido] = useState(false);
     const [mostrarBotaoDefinir, setMostrarBotaoDefinir] = useState(true);
-    const [mostrarInputsPersonalizados, setMostrarInputsPersonalizados] = useState(false); 
+    const [mostrarInputsPersonalizados, setMostrarInputsPersonalizados] = useState(false);
     const db = getFirestore(firebaseApp);
 
-    // Função para buscar o número sorteado
+    useEffect(() => {
+        // Verificar se já existe um intervalo salvo no localStorage
+        const intervaloSalvo = localStorage.getItem("intervaloEscolhido");
+        if (intervaloSalvo) {
+            const intervalo = JSON.parse(intervaloSalvo);
+            setIntervaloEscolhido(intervalo.intervaloEscolhido);
+            setInicioIntervalo(intervalo.inicioIntervalo);
+            setFimIntervalo(intervalo.fimIntervalo);
+            setIntervaloDefinido(true);
+            setMensagem("");
+        }
+    }, []);
+
     const buscarNumeroSorteado = async () => {
         const docRef = doc(db, "sorteio", "numeroSorteado");
         const docSnap = await getDoc(docRef);
@@ -22,10 +35,9 @@ export const UserPage = () => {
         if (docSnap.exists()) {
             setNumero(docSnap.data().numero);
         } else {
-            setNumero(Math.floor(Math.random() * fimIntervalo) + inicioIntervalo); 
+            setNumero(Math.floor(Math.random() * fimIntervalo) + inicioIntervalo);
         }
     };
-
 
     const sortearNumero = async () => {
         await buscarNumeroSorteado();
@@ -37,24 +49,22 @@ export const UserPage = () => {
         }
     };
 
-   
     const handleIntervaloChange = (event) => {
         const novoIntervalo = event.target.value;
         setIntervaloEscolhido(novoIntervalo);
-        setMostrarBotaoDefinir(true); 
+        setMostrarBotaoDefinir(true);
 
         if (novoIntervalo === "custom") {
-            setMostrarInputsPersonalizados(true); 
+            setMostrarInputsPersonalizados(true);
             setInicioIntervalo(1);
             setFimIntervalo(100);
         } else {
-            setMostrarInputsPersonalizados(false); 
+            setMostrarInputsPersonalizados(false);
             setInicioIntervalo(1);
             setFimIntervalo(Number(novoIntervalo));
         }
     };
 
-    // Função para definir o intervalo
     const definirIntervalo = () => {
         if (inicioIntervalo >= fimIntervalo) {
             setMensagem("Erro: O número de início deve ser menor que o de fim.");
@@ -63,77 +73,112 @@ export const UserPage = () => {
             setMostrarBotaoDefinir(false);
             setMensagem("");
             setMostrarInputsPersonalizados(false);
+
+            // Salvar o intervalo no localStorage
+            const intervalo = {
+                intervaloEscolhido,
+                inicioIntervalo,
+                fimIntervalo,
+            };
+            localStorage.setItem("intervaloEscolhido", JSON.stringify(intervalo));
         }
     };
 
-    // Função para alterar o intervalo
     const alterarIntervalo = () => {
-        setIntervaloDefinido(false); 
-        setMostrarBotaoDefinir(true); 
+        setIntervaloDefinido(false);
+        setMostrarBotaoDefinir(true);
         setMensagem("Intervalo alterado. Escolha um novo intervalo.");
-        setMostrarInputsPersonalizados(false); 
+        setMostrarInputsPersonalizados(false);
+
+        // Limpar o intervalo salvo no localStorage
+        localStorage.removeItem("intervaloEscolhido");
     };
 
     return (
-        <div>
-            <h2>{intervaloDefinido ? `Número Sorteado: ${numero}` : "Defina um intervalo"}</h2>
-            
-            {/* Mensagem inicial */}
-            <div>
-                <p>{mensagem}</p>
-            </div>
+        <Container>
+            <Row className="my-4">
+                <Col>
+                    <h2 className="text-center">
+                        {intervaloDefinido ? `Número Sorteado: ${numero}` : "Defina um intervalo"}
+                    </h2>
+                </Col>
+            </Row>
 
-            {/* Opção de escolher intervalo */}
+            <Row>
+                <Col md={{ span: 6, offset: 3 }}>
+                    <Alert variant={mensagem.includes("Erro") ? "danger" : "primary"}>
+                        {mensagem}
+                    </Alert>
+                </Col>
+            </Row>
+
             {!intervaloDefinido && (
-                <div>
-                    <label htmlFor="intervalo">Escolha o intervalo de números: </label>
-                    <select
-                        id="intervalo"
-                        value={intervaloEscolhido}
-                        onChange={handleIntervaloChange}
-                    >
-                        <option value="100">1 - 100</option>
-                        <option value="50">1 - 50</option>
-                        <option value="30">1 - 30</option>
-                        <option value="30">1 - 15</option>
-                        <option value="custom">Customizado</option>
-                    </select>
-                </div>
+                <Row>
+                    <Col md={{ span: 6, offset: 3 }}>
+                        <Form.Group controlId="intervalo">
+                            <Form.Label>Escolha o intervalo de números:</Form.Label>
+                            <Form.Select value={intervaloEscolhido} onChange={handleIntervaloChange}>
+                                <option value="100">1 - 100</option>
+                                <option value="50">1 - 50</option>
+                                <option value="30">1 - 30</option>
+                                <option value="15">1 - 15</option>
+                                <option value="custom">Customizado</option>
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                </Row>
             )}
 
-            {/* Inputs para intervalo personalizado */}
             {mostrarInputsPersonalizados && intervaloEscolhido === "custom" && (
-                <div>
-                    <input
-                        type="number"
-                        value={inicioIntervalo}
-                        onChange={(e) => setInicioIntervalo(e.target.value)}
-                        placeholder="Número de início"
-                    />
-                    <input
-                        type="number"
-                        value={fimIntervalo}
-                        onChange={(e) => setFimIntervalo(e.target.value)}
-                        placeholder="Número de fim"
-                    />
-                </div>
+                <Row>
+                    <Col md={{ span: 6, offset: 3 }}>
+                        <InputGroup className="mb-3">
+                            <Form.Control
+                                type="number"
+                                value={inicioIntervalo}
+                                onChange={(e) => setInicioIntervalo(e.target.value)}
+                                placeholder="Número de início"
+                            />
+                            <Form.Control
+                                type="number"
+                                value={fimIntervalo}
+                                onChange={(e) => setFimIntervalo(e.target.value)}
+                                placeholder="Número de fim"
+                            />
+                        </InputGroup>
+                    </Col>
+                </Row>
             )}
 
             {mostrarBotaoDefinir && (
-                <button onClick={definirIntervalo}>Definir intervalo</button>
+                <Row>
+                    <Col className="text-center">
+                        <Button variant="primary" onClick={definirIntervalo}>
+                            Definir intervalo
+                        </Button>
+                    </Col>
+                </Row>
             )}
 
             {intervaloDefinido && (
-                <div>
-                    <input
-                        type="number"
-                        placeholder="Digite seu número"
-                        onChange={(e) => setInputNumero(e.target.value)}
-                    />
-                    <button onClick={sortearNumero}>Sortear</button>
-                    <button onClick={alterarIntervalo}>Alterar Intervalo</button> 
-                </div>
+                <Row>
+                    <Col md={{ span: 6, offset: 3 }}>
+                        <InputGroup className="mb-3">
+                            <Form.Control
+                                type="number"
+                                placeholder="Digite seu número"
+                                onChange={(e) => setInputNumero(e.target.value)}
+                            />
+                            <Button variant="success" onClick={sortearNumero}>
+                                Sortear
+                            </Button>
+                        </InputGroup>
+                        <Button variant="warning" className="w-100" onClick={alterarIntervalo}>
+                            Alterar Intervalo
+                        </Button>
+                    </Col>
+                </Row>
             )}
-        </div>
+        </Container>
     );
 };

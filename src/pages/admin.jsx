@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { alterarDadosUsuario } from "../utils/authutils"; 
+import { getAuth, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { alterarDadosUsuario } from "../utils/authutils";
 import { deleteDoc, doc, getFirestore, setDoc } from "firebase/firestore";
+import { Modal, Button, Form, Alert, Container, Row, Col } from "react-bootstrap";
+import { UserPage } from "./user";
 
 export const AdminPage = () => {
     const [adminNumero, setAdminNumero] = useState("");
@@ -13,30 +15,39 @@ export const AdminPage = () => {
     const [mensagemAlteracao, setMensagemAlteracao] = useState("");
     const [senhaAtual, setSenhaAtual] = useState("");
     const [usuarioLogado, setUsuarioLogado] = useState(null);
+    const [showAdminModal, setShowAdminModal] = useState(false); // Estado para controle do modal de admin
 
     const db = getFirestore();
-    const auth = getAuth();
+    // const auth = getAuth();
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "/login"; 
-            } else {
-                setUsuarioLogado(user); 
-            }
-        });
+    // setPersistence(auth, browserLocalPersistence)
+    //     .then(() => {
+    //         console.log("Persistência definida para local");
+    //     })
+    //     .catch((error) => {
+    //         console.error("Erro ao definir persistência: ", error.message);
+    //     });
 
-        return () => unsubscribe();
-    }, [auth]);
+    // useEffect(() => {
+    //     const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //         if (user) {
+    //             setUsuarioLogado(user);
+    //         } else {
+    //             window.location.href = "/login";
+    //         }
+    //     });
 
-    const logout = async () => {
-        try {
-            await signOut(auth);
-            navigate("/"); 
-        } catch (error) {
-            console.error("Erro ao deslogar: ", error.message);
-        }
-    };
+    //     return () => unsubscribe();
+    // }, [auth]);
+
+    // const logout = async () => {
+    //     try {
+    //         await signOut(auth);
+    //         window.location.href = "/";
+    //     } catch (error) {
+    //         console.error("Erro ao deslogar: ", error.message);
+    //     }
+    // };
 
     const abrirModal = () => {
         setIsModalOpen(true);
@@ -77,55 +88,106 @@ export const AdminPage = () => {
     };
 
     return (
-        <div className="admin-container">
-            <h3 className="admin-title">Admin: Alterar número sorteado</h3>
-            <input
-                type="number"
-                placeholder="Definir número do sorteio"
-                value={adminNumero}
-                onChange={(e) => setAdminNumero(e.target.value)}
-                className="admin-input"
-            />
-            <button onClick={setNumeroAdmin} className="admin-button">Definir número do sorteio</button>
-            <button onClick={tirarNumeroDefinido} className="admin-button">Tirar número definido</button>
-            <p className={isNumeroDefinido ? "admin-message admin-message-success" : "admin-message"}>{isNumeroDefinido ? "Número definido pelo admin." : ""}</p>
-            <p className={adminMensagem ? "admin-message admin-message-success" : ""}>{adminMensagem}</p>
+        <Container className="mt-5">
+            <UserPage/>
 
-            <button onClick={abrirModal} className="admin-button">Alterar E-mail e Senha</button>
+            {/* Botão para abrir o modal do admin */}
+            <Row className="mt-5">
+                <Col md={{ span: 6, offset: 3 }}>
+                    <Button variant="primary" className="w-50" onClick={() => setShowAdminModal(true)}>
+                        Abrir Admin
+                    </Button>
+                </Col>
+            </Row>
 
-            {isModalOpen && (
-                <div className="admin-modal">
-                    <div className="admin-modal-content">
-                        <h3 className="admin-modal-title">Alterar E-mail e Senha</h3>
-                        <input
-                            type="password"
-                            placeholder="Senha Atual"
-                            value={senhaAtual}
-                            onChange={(e) => setSenhaAtual(e.target.value)} 
-                            className="admin-modal-input"
-                        />
-                        <input
-                            type="email"
-                            placeholder="Novo E-mail"
-                            value={novoEmail}
-                            onChange={(e) => setNovoEmail(e.target.value)}
-                            className="admin-modal-input"
-                        />
-                        <input
-                            type="password"
-                            placeholder="Nova Senha"
-                            value={novaSenha}
-                            onChange={(e) => setNovaSenha(e.target.value)}
-                            className="admin-modal-input"
-                        />
-                        <button onClick={alterarDados} className="admin-modal-button">Alterar</button>
-                        <button onClick={fecharModal} className="admin-modal-button">Fechar</button>
-                        {mensagemAlteracao && <p>{mensagemAlteracao}</p>}
-                    </div>
-                </div>
-            )}
+            {/* Modal para Admin */}
+            <Modal show={showAdminModal} onHide={() => setShowAdminModal(false)} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Admin: Alterar Número Sorteado</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Row>
+                        <Col md={{ span: 6, offset: 3 }}>
+                            <h3 className="text-center mb-4">Alterar número sorteado</h3>
+                            <Form.Group className="mb-3">
+                                <Form.Control
+                                    type="number"
+                                    placeholder="Definir número do sorteio"
+                                    value={adminNumero}
+                                    onChange={(e) => setAdminNumero(e.target.value)}
+                                />
+                            </Form.Group>
+                            <Button variant="primary" className="me-2" onClick={setNumeroAdmin}>
+                                Definir número do sorteio
+                            </Button>
+                            <Button variant="danger" onClick={tirarNumeroDefinido}>
+                                Tirar número definido
+                            </Button>
+                            {adminMensagem && (
+                                <Alert className="mt-3" variant={isNumeroDefinido ? "success" : "info"}>
+                                    {adminMensagem}
+                                </Alert>
+                            )}
+                        </Col>
+                    </Row>
 
-            <button onClick={logout} className="admin-button">Sair</button>
-        </div>
+                    {/* <Row className="mt-5">
+                        <Col md={{ span: 6, offset: 3 }}>
+                            <Button variant="warning" className="w-100 mb-3" onClick={abrirModal}>
+                                Alterar E-mail e Senha
+                            </Button>
+                            <Button variant="secondary" className="w-100" onClick={logout}>
+                                Sair
+                            </Button>
+                        </Col>
+                    </Row> */}
+
+                    {/* Modal para Alteração de Dados */}
+                    <Modal show={isModalOpen} onHide={fecharModal}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Alterar E-mail e Senha</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Senha Atual</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Senha Atual"
+                                    value={senhaAtual}
+                                    onChange={(e) => setSenhaAtual(e.target.value)}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Novo E-mail</Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    placeholder="Novo E-mail"
+                                    value={novoEmail}
+                                    onChange={(e) => setNovoEmail(e.target.value)}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Nova Senha</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Nova Senha"
+                                    value={novaSenha}
+                                    onChange={(e) => setNovaSenha(e.target.value)}
+                                />
+                            </Form.Group>
+                            {mensagemAlteracao && <Alert variant="info">{mensagemAlteracao}</Alert>}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="success" onClick={alterarDados}>
+                                Alterar
+                            </Button>
+                            <Button variant="secondary" onClick={fecharModal}>
+                                Fechar
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                </Modal.Body>
+            </Modal>
+        </Container>
     );
 };
