@@ -54,8 +54,10 @@ s.button-roxo {
 
 .roleta-container {
     position: relative;
-    width: 400px;
-    height: 400px;
+    width: 32%;
+    aspect-ratio: 1/1;
+    height: auto;
+    max-width: 400px;
     border: 5px solid #8b8b8b;
     border-radius: 50%;
     display: flex;
@@ -324,15 +326,31 @@ button:active {
 
 @media (max-width: 640px){
     .roleta-container {
-       width: 300px;
+       width: 60%;
        height: 300px;
     }
-    
 }
 
-@media (max-width: 530px){
-    .h1t {
-        font-size: 1px;
+@media (min-width: 640px) and (max-width: 1024px){
+    .roleta-container {
+       width: 80%;
+       height: 400px;
     }
+}
+
+@media (min-width: 1025px) and (max-width: 1400px){
+    .roleta-container {
+       width: 80%;
+       height: 400px;
+    }
+}
+
+
+
+@media (min-width: 300px) and (max-width: 640px) {
+    .roleta-container {
+        width: 100%;
+        height: 300px;
+     }
     
 }

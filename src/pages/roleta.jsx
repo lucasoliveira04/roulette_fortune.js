@@ -178,7 +178,7 @@ export const RoletaPage = () => {
             </div>
 
             {showRoleta ? (
-                <div className="roleta-container" style={{height: "500px"}}>
+                <div className="roleta-container">
                     {numeros.map((numero, index) => (
                         <button
                             key={numero}
@@ -225,9 +225,6 @@ export const RoletaPage = () => {
                     </p>
                 </div>
             )}
-
-
-
 
             {showRoleta && (
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
