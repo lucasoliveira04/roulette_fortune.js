@@ -6,7 +6,7 @@ import audio from "../public/audio.mp3";
 
 export const RoletaPage = () => {
     const numeros = Array.from({ length: 35 }, (_, index) => index + 1);
-    const espacamento = 15;
+    const espacamento = 20;
     const [roletaSize, setRoletaSize] = useState(400);
     const [sorteando, setSorteando] = useState(false);
     const [numeroSorteado, setNumeroSorteado] = useState(null);
@@ -29,9 +29,9 @@ export const RoletaPage = () => {
     }, []);
 
     const calcularTransform = (index) => {
-        let distanciaEntreBotoes = roletaSize * 0.575;
+        let distanciaEntreBotoes = roletaSize * 0.57;
         if (window.innerWidth <= 644) {
-            distanciaEntreBotoes = roletaSize * 0.5;
+            distanciaEntreBotoes = roletaSize * 0.575;
         }
         const angulo = (360 / numeros.length) * index + espacamento;
         return `rotate(${angulo}deg) translate(${distanciaEntreBotoes}px) rotate(${-angulo}deg)`;
@@ -102,6 +102,7 @@ export const RoletaPage = () => {
                             color: getCorDoNumero(numero),  
                             border: "1px solid white",
                             transition: "color 0.3s ease", 
+
                         }}
                     >
                         {numero}
