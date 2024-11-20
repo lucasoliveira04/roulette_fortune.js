@@ -20,9 +20,9 @@ export const RoletaPage = () => {
     const [countdownActive, setCountdownActive] = useState(false);
     const [countdownEnabled, setCountdownEnabled] = useState(true);
     const [countdownKey, setCountdownKey] = useState(0);
-    const [animationClass, setAnimationClass] = useState("");
     const [numeroInserido, setNumeroInserido] = useState('');
     const [acertou, setAcertou] = useState(null);
+    const [modalAberto, setModalAberto] = useState(false);
 
     const roletaSound = useRef(new Audio(audio));
     const audioSite = useRef(new Audio(fortuneTiger));
@@ -84,6 +84,7 @@ export const RoletaPage = () => {
             }, 1000);
         } else {
             iniciarRoleta();
+            console.log("Sortenado..")
         }
     };
 
@@ -117,6 +118,13 @@ export const RoletaPage = () => {
                     setSorteando(false);
                     setAnimacaoClasse("");
                     roletaSound.current.pause();
+
+                    if (parseInt(numeroInserido) === numeroAleatorio) {
+                        setAcertou(true);
+                    } else {
+                        setAcertou(false);
+                    }
+                    setModalAberto(true);
                 }
             }
         }, 100);
@@ -155,6 +163,8 @@ export const RoletaPage = () => {
         } else {
             setAcertou(false);
         }
+
+        setModalAberto(true); 
     }
 
     return (
@@ -168,7 +178,7 @@ export const RoletaPage = () => {
             </div>
 
             {showRoleta ? (
-                <div className="roleta-container">
+                <div className="roleta-container" style={{height: "500px"}}>
                     {numeros.map((numero, index) => (
                         <button
                             key={numero}
@@ -216,51 +226,134 @@ export const RoletaPage = () => {
                 </div>
             )}
 
-        
-            
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-                <div style={{ display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
-                    {showRoleta && (
+
+
+            {showRoleta && (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+
+                    <div>
+                        <input
+                            type="number"
+                            placeholder="Insira um número"
+                            value={numeroInserido}
+                            onChange={(e) => setNumeroInserido(e.target.value)}
+                            disabled={sorteando}
+                            style={{
+                                padding: "10px",
+                                fontSize: "16px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                                textAlign: "center",
+                            }}
+                        />
+
                         <button
-                            className="sortear-button"
-                            onClick={iniciarSorteio}
-                            disabled={sorteando || countdownActive}
+                            onClick={verificarAcerto}
+                            className="button-roxo"
+                            disabled={!numeroInserido || sorteando}
+                            style={{
+                                padding: "10px 20px",
+                                fontSize: "16px",
+                                borderRadius: "5px",
+                                backgroundColor: "#6a0dad",
+                                color: "white",
+                                border: "none",
+                                cursor: "pointer",
+                            }}
                         >
-                            Sortear
+                            Verificar Número
                         </button>
-                    )}
+                    </div>
 
-                    {showRoleta && (
-                        <div className="checkbox-container">
-                            <input
-                                type="checkbox"
-                                checked={countdownEnabled}
-                                onChange={toggleCountdown}
-                                style={{
-                                    cursor: countdownActive ? 'not-allowed' : 'pointer'
-                                }}
-                            />
-                            <label style={{ color: "white", fontWeight: countdownEnabled ? 'bold' : 'normal' }}>
-                                {countdownEnabled ? 'Desativar contagem regressiva' : 'Ativar contagem regressiva'}
-                            </label>
-                        </div>
-                    )}
-                </div>
 
-                {/* Botão de mostrar/esconder roleta abaixo */}
-                <div>
-                    <button
-                        className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
-                        onClick={toggleRoleta}
-                    >
-                        {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
-                    </button>
+                    <div style={{ display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
+                        {showRoleta && (
+                            <button
+                                className="sortear-button"
+                                onClick={iniciarSorteio}
+                                disabled={sorteando || countdownActive}
+                            >
+                                Sortear
+                            </button>
+                        )}
+
+                        {showRoleta && (
+                            <div className="checkbox-container">
+                                <input
+                                    type="checkbox"
+                                    checked={countdownEnabled}
+                                    onChange={toggleCountdown}
+                                    style={{
+                                        cursor: countdownActive ? 'not-allowed' : 'pointer'
+                                    }}
+                                />
+                                <label style={{ color: "white", fontWeight: countdownEnabled ? 'bold' : 'normal' }}>
+                                    {countdownEnabled ? 'Desativar contagem regressiva' : 'Ativar contagem regressiva'}
+                                </label>
+                            </div>
+                        )}
+                    </div>
+
+
                 </div>
+            )}
+
+            <div>
+                <button
+                    className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
+                    onClick={toggleRoleta}
+                >
+                    {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
+                </button>
             </div>
+
+            {modalAberto && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                    }}
+                >
+                    <div
+                        style={{
+                            background: "white",
+                            padding: "20px",
+                            borderRadius: "8px",
+                            textAlign: "center",
+                            maxWidth: "300px",
+                        }}
+                    >
+                        <h2 style={{ color: acertou ? "green" : "red" }}>
+                            {acertou ? "Parabéns!" : "Que pena!"}
+                        </h2>
+                        <p>{acertou ? "Você acertou o número!" : "Tente novamente!"}</p>
+                        <button
+                            onClick={() => setModalAberto(false)}
+                            style={{
+                                marginTop: "10px",
+                                padding: "10px 20px",
+                                fontSize: "16px",
+                                borderRadius: "5px",
+                                backgroundColor: "#6a0dad",
+                                color: "white",
+                                border: "none",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
-
-
-
 };
