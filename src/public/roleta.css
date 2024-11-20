@@ -176,6 +176,17 @@ button:active {
     border: 2px solid #fff;
 }
 
+.countdown-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+
+
 @keyframes deslizamento {
     0% {
         transform: translate(-50%, -50%) translateX(-10px);
@@ -200,7 +211,7 @@ button:active {
         width: 25px;
         height: 29px;
         font-size: 10px;
-        
+
     }
 }
 
