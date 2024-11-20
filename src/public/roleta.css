@@ -329,3 +329,10 @@ button:active {
     }
     
 }
+
+@media (max-width: 530px){
+    .h1t {
+        font-size: 1px;
+    }
+    
+}
