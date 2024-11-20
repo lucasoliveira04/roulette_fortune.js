@@ -198,8 +198,9 @@ button:active {
 
     .roleta-button {
         width: 25px;
-        height: 25px;
+        height: 29px;
         font-size: 10px;
+        
     }
 }
 
