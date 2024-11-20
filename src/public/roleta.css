@@ -54,10 +54,10 @@ s.button-roxo {
 
 .roleta-container {
     position: relative;
-    width: 32%;
-    aspect-ratio: 1/1;
-    height: auto;
-    max-width: 400px;
+    width: 80%; 
+    max-width: 370px; 
+    min-width: 290px;
+    aspect-ratio: 1 / 1;
     border: 5px solid #8b8b8b;
     border-radius: 50%;
     display: flex;
@@ -66,6 +66,7 @@ s.button-roxo {
     background-color: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
 
 .roleta-button {
     position: absolute;
@@ -324,33 +325,48 @@ button:active {
     }
 }
 
-@media (max-width: 640px){
+/* Telas menores (mobile) */
+@media (max-width: 479px) {
     .roleta-container {
-       width: 60%;
-       height: 300px;
-    }
-}
-
-@media (min-width: 640px) and (max-width: 1024px){
-    .roleta-container {
-       width: 80%;
-       height: 400px;
-    }
-}
-
-@media (min-width: 1025px) and (max-width: 1400px){
-    .roleta-container {
-       width: 80%;
-       height: 400px;
-    }
-}
-
-
-
-@media (min-width: 300px) and (max-width: 640px) {
-    .roleta-container {
-        width: 100%;
+        width: 65%;
         height: 300px;
-     }
-    
+    }
+}
+
+@media (min-width: 480px) and (max-width: 629px) {
+    .roleta-container {
+        width: 50%;
+        height: 300px;
+    }
+}
+
+/* Telas de tamanho médio (tablets) */
+@media (min-width: 630px) and (max-width: 1023px) {
+    .roleta-container {
+        width: 80%;
+        height: 350px;
+    }
+}
+
+@media (min-width: 631px) and (max-width: 643px) {
+    .roleta-container {
+        width: 50%;
+        height: 350px;
+    }
+}
+
+/* Telas grandes (desktop) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+    .roleta-container {
+        width: 80%;
+        height: 400px;
+    }
+}
+
+/* Telas extra grandes */
+@media (min-width: 1440px) {
+    .roleta-container {
+        width: 70%;
+        height: 450px;
+    }
 }
