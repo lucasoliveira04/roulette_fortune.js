@@ -41,7 +41,6 @@ s.button-roxo {
     transform: scale(0.98);
 }
 
-/* Estilos gerais */
 .container-fluid {
     display: flex;
     flex-direction: column;
@@ -49,7 +48,7 @@ s.button-roxo {
     justify-content: center;
     gap: 100px;
     height: 100vh;
-    background-color: #f4f4f4;
+    background-color:  #1D1D1D;
     font-family: 'Arial', sans-serif;
 }
 
@@ -84,10 +83,6 @@ s.button-roxo {
     transition: background-color 0.3s, transform 0.3s;
 }
 
-.roleta-button:hover {
-    background-color: #ff9900;
-    transform: scale(1.1);
-}
 
 button {
     padding: 10px 20px;
@@ -176,15 +171,139 @@ button:active {
     border: 2px solid #fff;
 }
 
-.countdown-display {
+.sortear-button {
+    height: 60px;
+    width: 200px;
+    font-size: 20px;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 5px;
+    transition: background-color 0.4s ease, color 0.4s ease, border-radius 0.4s ease, transform 0.3s ease;
+}
+
+.sortear-button:hover {
+    background-color: #5118b9; 
+    color: white; 
+    border-radius: 20px;
+    transform: scale(1.05);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 10px 0;
+}
+
+.checkbox-container label {
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    appearance: none; 
+    border: 2px solid #bbb;
+    border-radius: 5px;
+    background-color: #fff;
+    position: relative;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.checkbox-container input[type="checkbox"]:checked {
+    background-color: #6b30ca;
+    border-color: #6928a7;
+}
+
+.checkbox-container input[type="checkbox"]:checked::before {
+    content: '✔'; 
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    color: rgb(0, 0, 0);
+    left: 4px;
+    top: -1px;
+    color: white;
+    font-size: 16px;
+}
+
+.checkbox-container input[type="checkbox"]:focus {
+    outline: none; 
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); 
+}
+
+.checkbox-container label:hover {
+    color: #5d25df; 
     font-weight: bold;
 }
+
+.welcome-message{
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+   
+}
+
+.welcome-message .letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s forwards;
+}
+
+.welcome-message .letter.show {
+    opacity: 1;
+    transform: translateY(0); 
+}
+
+.countdown-display {
+    font-size: 50px;
+    font-weight: bold;
+    color: rgb(24, 18, 18);
+    display: inline-block;
+    animation: fadeInOut 1s ease-in-out;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+.fade-in {
+    opacity: 1;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 
 @keyframes deslizamento {
@@ -215,15 +334,43 @@ button:active {
     }
 }
 
-@media (max-width: 420px) {
+@media (min-width: 645px) and (max-width: 1500px) {
     .roleta-container {
-        width: 280px;
-        height: 280px;
+        width: 300px;
+        height: 400px;
+        border-radius: 100%;
     }
 
     .roleta-button {
-        width: 20px;
-        height: 20px;
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+}
+
+@media (max-width: 420px) {
+    .roleta-container {
+        width: 200px;
+        height: 200px;
+    }
+
+    .roleta-button {
+        width: 30px;
+        height: 1px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 415px) {
+    .roleta-container {
+        width: 300px;
+        height: 300px;
+    }
+
+    .roleta-button {
+        width: 30px;
+        height: 1px;
         font-size: 14px;
     }
 }
@@ -237,7 +384,7 @@ button:active {
 
     .roleta-button {
         width: 18px;
-        height: 18px;
+        height: 28px;
         font-size: 10px;
     }
 }

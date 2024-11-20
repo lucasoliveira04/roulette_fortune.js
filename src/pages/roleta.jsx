@@ -3,7 +3,8 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseApp } from "../services/firebase";
 import "../public/roleta.css";
 import audio from "../public/audio.mp3";
-import { FaPlay, FaPause } from "react-icons/fa"; // Ícones de Play/Pause
+import fortuneTiger from "../public/fortuneAudio.mp3";
+import { FaPlay, FaPause, FaMusic, FaVolumeMute, FaVolumeDown } from "react-icons/fa";
 
 export const RoletaPage = () => {
     const numeros = Array.from({ length: 35 }, (_, index) => index + 1);
@@ -14,12 +15,17 @@ export const RoletaPage = () => {
     const [animacaoClasse, setAnimacaoClasse] = useState("");
     const [numeroPassando, setNumeroPassando] = useState(null);
     const [showRoleta, setShowRoleta] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);  // Controle do áudio
-    const [countdown, setCountdown] = useState(3); // Contagem regressiva
-    const [countdownActive, setCountdownActive] = useState(false); // Controle de contagem ativa
-    const [countdownEnabled, setCountdownEnabled] = useState(true); // Controle do checkbox para ativar/desativar a contagem
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [countdown, setCountdown] = useState(3);
+    const [countdownActive, setCountdownActive] = useState(false);
+    const [countdownEnabled, setCountdownEnabled] = useState(true);
+    const [countdownKey, setCountdownKey] = useState(0);
+    const [animationClass, setAnimationClass] = useState("");
+    const [numeroInserido, setNumeroInserido] = useState('');
+    const [acertou, setAcertou] = useState(null);
 
-    const roletaSound = useRef(new Audio(audio)); // Audio controlado pelo useRef
+    const roletaSound = useRef(new Audio(audio));
+    const audioSite = useRef(new Audio(fortuneTiger));
     const db = getFirestore(firebaseApp);
 
     useEffect(() => {
@@ -29,10 +35,13 @@ export const RoletaPage = () => {
         handleResize();
         window.addEventListener("resize", handleResize);
 
+        setIsPlaying(true);
+
         return () => {
             window.removeEventListener("resize", handleResize);
         };
     }, []);
+
 
     const calcularTransform = (index) => {
         let distanciaEntreBotoes = roletaSize * 0.57;
@@ -62,7 +71,6 @@ export const RoletaPage = () => {
         setAnimacaoClasse("animacao-carrossel");
 
         if (countdownEnabled) {
-            // Iniciar contagem regressiva
             setCountdownActive(true);
             let countdownValue = 3;
             setCountdown(countdownValue);
@@ -72,21 +80,20 @@ export const RoletaPage = () => {
                 setCountdown(countdownValue);
 
                 if (countdownValue <= 0) {
-                    clearInterval(countdownInterval); // Parar a contagem
-                    setCountdownActive(false); // Finalizar a contagem
-                    iniciarRoleta(); // Iniciar a roleta após a contagem
+                    clearInterval(countdownInterval);
+                    setCountdownActive(false);
+                    iniciarRoleta();
                 }
-            }, 1000); // Decrementa a cada segundo
+            }, 1000);
         } else {
-            iniciarRoleta(); // Caso a contagem não esteja ativada, iniciar a roleta imediatamente
+            iniciarRoleta();
         }
     };
 
     const iniciarRoleta = async () => {
-        // Iniciar o áudio após a contagem regressiva
         roletaSound.current.loop = true;
         roletaSound.current.play();
-        setIsPlaying(true);  // Garantir que o áudio começa a tocar
+        setIsPlaying(true);
 
         const numeroAleatorio = await buscarNumeroSorteado();
         const indiceSorteado = numeros.indexOf(numeroAleatorio);
@@ -112,7 +119,7 @@ export const RoletaPage = () => {
                     setNumeroSorteado(numeroAleatorio);
                     setSorteando(false);
                     setAnimacaoClasse("");
-                    roletaSound.current.pause();  // Parar o áudio quando a roleta parar
+                    roletaSound.current.pause();
                 }
             }
         }, 100);
@@ -127,53 +134,49 @@ export const RoletaPage = () => {
     };
 
     const toggleAudio = () => {
-        if (isPlaying) {
-            roletaSound.current.pause();
-        } else {
-            roletaSound.current.play();
+        if (sorteando) {
+            if (roletaSound.current) {
+                if (roletaSound.current.paused) {
+                    roletaSound.current.play();
+                } else {
+                    roletaSound.current.pause();
+                }
+                setIsPlaying(!roletaSound.current.paused);
+            }
         }
-        setIsPlaying(!isPlaying);
     };
+
 
     const toggleCountdown = () => {
         setCountdownEnabled(!countdownEnabled);
     };
 
+
+    const verificarAcerto = () => {
+        if (parseInt(numeroInserido) === numeroSorteado) {
+            setAcertou(true);
+        } else {
+            setAcertou(false);
+        }
+    }
+
     return (
         <div className="container-fluid">
-            <div style={{ display: "flex" }}>
-                <button
-                    className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
-                    onClick={toggleRoleta}
-                >
-                    {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
-                </button>
-
-                <button onClick={toggleAudio}>
-                    {/* Exibindo ícones de play/pause */}
-                    {isPlaying ? <FaPause /> : <FaPlay />}
-                </button>
+            <div style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                {showRoleta && (
+                    <button onClick={toggleAudio}>
+                        {isPlaying ? <FaVolumeMute /> : <FaVolumeDown />}
+                    </button>
+                )}
             </div>
 
-            <div>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={countdownEnabled}
-                        onChange={toggleCountdown}
-                    />
-                    Ativar contagem regressiva
-                </label>
-            </div>
-
-            {showRoleta && (
+            {showRoleta ? (
                 <div className="roleta-container">
                     {numeros.map((numero, index) => (
                         <button
                             key={numero}
-                            className={`roleta-button ${
-                                numero === numeroSorteado ? "active" : ""
-                            } ${numero % 2 === 0 ? "roxa-clara" : "roxo"}`}
+                            className={`roleta-button ${numero === numeroSorteado ? "active" : ""
+                                } ${numero % 2 === 0 ? "roxa-clara" : "roxo"}`}
                             style={{
                                 transform: calcularTransform(index),
                                 color: getCorDoNumero(numero),
@@ -185,33 +188,82 @@ export const RoletaPage = () => {
                         </button>
                     ))}
 
-                    {/* Mostrar a contagem regressiva quando estiver ativa */}
                     {countdownActive && (
-                        <div className="countdown-display">
+                        <div key={countdownKey} className="countdown-display">
                             {countdown}
                         </div>
                     )}
 
-                    {/* Mostrar o número sorteado somente após a contagem regressiva */}
                     {!countdownActive && numeroSorteado !== null && (
                         <div className={`numero-sorteado ${animacaoClasse}`}>
                             {numeroSorteado}
                         </div>
                     )}
                 </div>
-            )}
-
-            {showRoleta && (
-                <div>
-                    <button
-                        className="button-roxo"
-                        onClick={iniciarSorteio}
-                        disabled={sorteando || countdownActive}
-                    >
-                        Sortear
-                    </button>
+            ) : (
+                <div className="welcome-message">
+                    <h1 style={{ color: "white", fontWeight: "bold", fontFamily: "Sour Gummy sans-serif", fontSize: "70px" }}>
+                        {"Seja bem-vindo!".split("").map((letter, index) => (
+                            <span key={index} className="letter" style={{ animationDelay: `${index * 0.1}s` }}>
+                                {letter === " " ? "\u00A0" : letter}
+                            </span>
+                        ))}
+                    </h1>
+                    <p style={{ color: "white", fontWeight: "bold", fontFamily: "Sour Gummy sans-serif", fontSize: "20px" }}>
+                        {"Aproveite o jogo e boa sorte!".split("").map((letter, index) => (
+                            <span key={index} className="letter" style={{ animationDelay: `${index * 0.1}s` }}>
+                                {letter === " " ? "\u00A0" : letter}
+                            </span>
+                        ))}
+                    </p>
                 </div>
             )}
+
+        
+            
+
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+                <div style={{ display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
+                    {showRoleta && (
+                        <button
+                            className="sortear-button"
+                            onClick={iniciarSorteio}
+                            disabled={sorteando || countdownActive}
+                        >
+                            Sortear
+                        </button>
+                    )}
+
+                    {showRoleta && (
+                        <div className="checkbox-container">
+                            <input
+                                type="checkbox"
+                                checked={countdownEnabled}
+                                onChange={toggleCountdown}
+                                style={{
+                                    cursor: countdownActive ? 'not-allowed' : 'pointer'
+                                }}
+                            />
+                            <label style={{ color: "white", fontWeight: countdownEnabled ? 'bold' : 'normal' }}>
+                                {countdownEnabled ? 'Desativar contagem regressiva' : 'Ativar contagem regressiva'}
+                            </label>
+                        </div>
+                    )}
+                </div>
+
+                {/* Botão de mostrar/esconder roleta abaixo */}
+                <div>
+                    <button
+                        className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
+                        onClick={toggleRoleta}
+                    >
+                        {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
+                    </button>
+                </div>
+            </div>
         </div>
     );
+
+
+
 };
