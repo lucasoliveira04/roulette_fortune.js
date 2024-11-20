@@ -1,3 +1,47 @@
+s.button-roxo {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 30px;
+    background-color: #9c4dcc; 
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-roxo:hover {
+    background-color: #7b1fa2;
+}
+
+.button-roxo:active {
+    transform: scale(0.98);
+}
+
+.button-branco-roxo {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid #ba68c8;
+    border-radius: 30px;
+    background-color: white; 
+    color: #ba68c8; 
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-branco-roxo:hover {
+    background-color: #ba68c8;
+    color: white; 
+}
+
+.button-branco-roxo:active {
+    transform: scale(0.98);
+}
+
+/* Estilos gerais */
 .container-fluid {
     display: flex;
     flex-direction: column;
@@ -13,7 +57,7 @@
     position: relative;
     width: 400px;
     height: 400px;
-    border: 5px solid #333;
+    border: 5px solid #8b8b8b; 
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -65,44 +109,74 @@ button:active {
     transform: scale(0.98);
 }
 
-button {
-    margin-top: 20px;
+.roleta-button.active {
+    transform: scale(1.2);
+    background-color: #ff9900;
+    color: #fff;
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Ajustes para telas menores */
-@media (max-width: 644px) {
-    .roleta-container {
-        width: 240px;
-        height: 240px;
-    }
-
-    .roleta-button {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
-    }
-
-    button {
-        font-size: 14px;
-        padding: 8px 16px;
-    }
+.numero-sorteado {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    color: #cec6bb;
+    background-color: #2716be;
+    padding: 15px 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
 }
 
-@media (max-width: 420px) {
-    .roleta-container {
-        width: 250px;
-        height: 250px;
-    }
+.animacao-movimento {
+    animation: deslizamento 0.2s ease-in-out;
+}
 
-    .roleta-button {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
-        border: 3px;
-    }
 
-    button {
-        font-size: 14px;
-        padding: 8px 16px;
-    }
+.roleta-button {
+    transform: translate(0, 0);
+    color: white; 
+    border: 1px solid white;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
+  }
+  
+ 
+  .roleta-button.roxo {
+    background-color: #e74c3c; 
+  }
+  
+  .roleta-button.roxo:hover {
+    background-color: #c0392b;
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  
+  
+  .roleta-button.roxa-clara {
+    background-color: #2ecc71;
+  }
+  
+  .roleta-button.roxa-clara:hover {
+    background-color: #27ae60; 
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  
+
+  .roleta-button.active {
+    border: 2px solid #fff;
+  }
+
+@keyframes deslizamento {
+    0% { transform: translate(-50%, -50%) translateX(-10px); }
+    50% { transform: translate(-50%, -50%) translateX(10px); }
+    100% { transform: translate(-50%, -50%) translateX(0); }
 }
