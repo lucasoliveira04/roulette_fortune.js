@@ -45,9 +45,6 @@ export const RoletaPage = () => {
 
     const calcularTransform = (index) => {
         let distanciaEntreBotoes = roletaSize * 0.57;
-        if (window.innerWidth <= 644) {
-            distanciaEntreBotoes = roletaSize * 0.575;
-        }
         const angulo = (360 / numeros.length) * index + espacamento;
         return `rotate(${angulo}deg) translate(${distanciaEntreBotoes}px) rotate(${-angulo}deg)`;
     };
