@@ -168,8 +168,9 @@ export const RoletaPage = () => {
     }
 
     return (
-        <div className="container-fluid" style={{ display: "flex", border: "1px solid red", justifyContent: "space-around" }}>
-            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", border: "1px solid red", alignContent: "center", marginTop: "20px" }}>
+        <div className="container-fluid" style={{ display: "flex", justifyContent: "space-around", padding: "10px" }}>
+            
+            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", border: "1px solid red", alignContent: "center"}}>
                 {showRoleta && (
                     <button onClick={toggleAudio}>
                         {isPlaying ? <FaVolumeMute /> : <FaVolumeDown />}
@@ -225,9 +226,9 @@ export const RoletaPage = () => {
                     </p>
                 </div>
             )}
-
+        
             {showRoleta && (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 
                     <div>
                         <input
@@ -264,7 +265,7 @@ export const RoletaPage = () => {
                     </div>
 
 
-                    <div style={{ display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
+                    <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
                         {showRoleta && (
                             <button
                                 className="sortear-button"
@@ -291,19 +292,17 @@ export const RoletaPage = () => {
                             </div>
                         )}
                     </div>
-
-                    <div>
-                        <button
-                            className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
-                            onClick={toggleRoleta}
-                        >
-                            {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
-                        </button>
-                    </div>
                 </div>
             )}
 
-
+            <div>
+                <button
+                    className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
+                    onClick={toggleRoleta}
+                >
+                    {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
+                </button>
+            </div>
 
             {modalAberto && (
                 <div
