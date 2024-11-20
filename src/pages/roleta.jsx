@@ -164,12 +164,12 @@ export const RoletaPage = () => {
             setAcertou(false);
         }
 
-        setModalAberto(true); 
+        setModalAberto(true);
     }
 
     return (
-        <div className="container-fluid">
-            <div style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+        <div className="container-fluid" style={{ display: "flex", border: "1px solid red", justifyContent: "space-around" }}>
+            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", border: "1px solid red", alignContent: "center", marginTop: "20px" }}>
                 {showRoleta && (
                     <button onClick={toggleAudio}>
                         {isPlaying ? <FaVolumeMute /> : <FaVolumeDown />}
@@ -292,18 +292,18 @@ export const RoletaPage = () => {
                         )}
                     </div>
 
-
+                    <div>
+                        <button
+                            className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
+                            onClick={toggleRoleta}
+                        >
+                            {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
+                        </button>
+                    </div>
                 </div>
             )}
 
-            <div>
-                <button
-                    className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
-                    onClick={toggleRoleta}
-                >
-                    {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
-                </button>
-            </div>
+
 
             {modalAberto && (
                 <div
