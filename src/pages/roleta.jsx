@@ -42,6 +42,19 @@ export const RoletaPage = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.hidden && roletaSound.current) {
+                roletaSound.current.pause();
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
+    }, []);
 
     const calcularTransform = (index) => {
         let distanciaEntreBotoes = roletaSize * 0.57;
