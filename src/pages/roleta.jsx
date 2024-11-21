@@ -169,8 +169,8 @@ export const RoletaPage = () => {
 
     return (
         <div className="container-fluid" style={{ display: "flex", justifyContent: "space-around", padding: "10px" }}>
-            
-            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", border: "1px solid red", alignContent: "center"}}>
+
+            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", alignContent: "center" }}>
                 {showRoleta && (
                     <button onClick={toggleAudio}>
                         {isPlaying ? <FaVolumeMute /> : <FaVolumeDown />}
@@ -226,83 +226,90 @@ export const RoletaPage = () => {
                     </p>
                 </div>
             )}
-        
-            {showRoleta && (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-
-                    <div>
-                        <input
-                            type="number"
-                            placeholder="Insira um número"
-                            value={numeroInserido}
-                            onChange={(e) => setNumeroInserido(e.target.value)}
-                            disabled={sorteando}
-                            style={{
-                                padding: "10px",
-                                fontSize: "16px",
-                                borderRadius: "5px",
-                                border: "1px solid #ccc",
-                                textAlign: "center",
-                            }}
-                        />
-
-                        <button
-                            onClick={verificarAcerto}
-                            className="button-roxo"
-                            disabled={!numeroInserido || sorteando}
-                            style={{
-                                padding: "10px 20px",
-                                fontSize: "16px",
-                                borderRadius: "5px",
-                                backgroundColor: "#6a0dad",
-                                color: "white",
-                                border: "none",
-                                cursor: "pointer",
-                            }}
-                        >
-                            Verificar Número
-                        </button>
-                    </div>
-
-
-                    <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
-                        {showRoleta && (
-                            <button
-                                className="sortear-button"
-                                onClick={iniciarSorteio}
-                                disabled={sorteando || countdownActive}
-                            >
-                                Sortear
-                            </button>
-                        )}
-
-                        {showRoleta && (
-                            <div className="checkbox-container">
-                                <input
-                                    type="checkbox"
-                                    checked={countdownEnabled}
-                                    onChange={toggleCountdown}
-                                    style={{
-                                        cursor: countdownActive ? 'not-allowed' : 'pointer'
-                                    }}
-                                />
-                                <label style={{ color: "white", fontWeight: countdownEnabled ? 'bold' : 'normal' }}>
-                                    {countdownEnabled ? 'Desativar contagem regressiva' : 'Ativar contagem regressiva'}
-                                </label>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
 
             <div>
-                <button
-                    className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
-                    onClick={toggleRoleta}
-                >
-                    {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
-                </button>
+                {showRoleta && (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+
+                        <div>
+                            <input
+                                type="number"
+                                placeholder="Insira um número"
+                                value={numeroInserido}
+                                onChange={(e) => setNumeroInserido(e.target.value)}
+                                disabled={sorteando}
+                                style={{
+                                    padding: "10px",
+                                    fontSize: "16px",
+                                    borderRadius: "5px",
+                                    border: "1px solid #ccc",
+                                    textAlign: "center",
+                                }}
+                            />
+
+                            <button
+                                onClick={verificarAcerto}
+                                className="button-roxo"
+                                disabled={!numeroInserido || sorteando}
+                                style={{
+                                    padding: "10px 20px",
+                                    fontSize: "16px",
+                                    borderRadius: "5px",
+                                    backgroundColor: "#6a0dad",
+                                    color: "white",
+                                    border: "none",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                Verificar Número
+                            </button>
+                        </div>
+
+
+                        <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+                            {showRoleta && (
+                                <button
+                                    className="sortear-button"
+                                    onClick={iniciarSorteio}
+                                    disabled={sorteando || countdownActive}
+                                >
+                                    Sortear
+                                </button>
+                            )}
+
+                            {showRoleta && (
+                                <div className="checkbox-container">
+                                    <input
+                                        type="checkbox"
+                                        checked={countdownEnabled}
+                                        onChange={toggleCountdown}
+                                        style={{
+                                            cursor: countdownActive ? 'not-allowed' : 'pointer'
+                                        }}
+                                    />
+                                    <label style={{ color: "white", fontWeight: countdownEnabled ? 'bold' : 'normal' }}>
+                                        {countdownEnabled ? 'Desativar contagem regressiva' : 'Ativar contagem regressiva'}
+                                    </label>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                
             </div>
+            
+            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                    <button
+                        className={`button-roxo ${showRoleta ? "btn-danger" : "btn-primary"}`}
+                        onClick={toggleRoleta}
+                    >
+                        {showRoleta ? "Esconder Roleta" : "Mostrar Roleta"}
+                    </button>
+                </div>
+
+
+
 
             {modalAberto && (
                 <div
