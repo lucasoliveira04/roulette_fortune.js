@@ -211,7 +211,7 @@ export const RoletaPage = () => {
             ) : (
                 <div className="welcome-message">
                     <h1 className="h1t" style={{ color: "white", fontWeight: "bold", fontFamily: "Sour Gummy sans-serif", fontSize: "50px" }}>
-                        {"Seja bem-vindo!".split("").map((letter, index) => (
+                        {"Seja bem-vindo".split("").map((letter, index) => (
                             <span key={index} className="letter" style={{ animationDelay: `${index * 0.1}s` }}>
                                 {letter === " " ? "\u00A0" : letter}
                             </span>
