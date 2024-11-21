@@ -236,8 +236,16 @@ export const RoletaPage = () => {
                                 type="number"
                                 placeholder="Insira um número"
                                 value={numeroInserido}
-                                onChange={(e) => setNumeroInserido(e.target.value)}
+                                onChange={(e) => {
+                                    const value = parseInt(e.target.value, 10);
+                                    if (value >= 1 && value <= 35) {
+                                        setNumeroInserido(value);
+                                    } else if (value < 1) {
+                                        setNumeroInserido(1);
+                                    }
+                                }}
                                 disabled={sorteando}
+                                max={35}
                                 style={{
                                     padding: "10px",
                                     fontSize: "16px",
@@ -250,7 +258,7 @@ export const RoletaPage = () => {
                             <button
                                 onClick={verificarAcerto}
                                 className="button-roxo"
-                                disabled={!numeroInserido || sorteando}
+                                disabled={!numeroInserido || sorteando || numeroSorteado === null} 
                                 style={{
                                     padding: "10px 20px",
                                     fontSize: "16px",
@@ -261,7 +269,7 @@ export const RoletaPage = () => {
                                     cursor: "pointer",
                                 }}
                             >
-                                Verificar Número
+                                Verificar Resultado
                             </button>
                         </div>
 

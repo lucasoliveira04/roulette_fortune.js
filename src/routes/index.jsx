@@ -8,11 +8,11 @@ export const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>  
-                <Route path="/login/w/w/e" element={<LoginPage />} /> 
-                <Route path="/roleta/admin/q/1/?/w/e" element={<AdminPage />} />
-                <Route path="/wwww" element={<UserPage />} />
+                <Route path="/login/" element={<LoginPage />} /> 
+                <Route path="/roleta/admin/" element={<AdminPage />} />
+                <Route path="/" element={<UserPage />} />
                 <Route path="/registrar" element={<RegistroPage/>} />
-                <Route path="*" element={<Navigate to="/roleta/admin/q/1/?/w/e" />} />
+                <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </BrowserRouter>
     );
