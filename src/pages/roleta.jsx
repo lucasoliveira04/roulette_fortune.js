@@ -237,10 +237,10 @@ export const RoletaPage = () => {
                                 placeholder="Insira um número"
                                 value={numeroInserido}
                                 onChange={(e) => {
-                                    const value = parseInt(e.target.value, 10);
-                                    if (value >= 1 && value <= 35) {
+                                    const value = e.target.value;
+                                    if (value === '' || (parseInt(value, 10) >= 1 && parseInt(value, 10) <= 35)) {
                                         setNumeroInserido(value);
-                                    } else if (value < 1) {
+                                    } else if (parseInt(value, 10) < 1) {
                                         setNumeroInserido(1);
                                     }
                                 }}
@@ -248,10 +248,11 @@ export const RoletaPage = () => {
                                 max={35}
                                 style={{
                                     padding: "10px",
-                                    fontSize: "16px",
+                                    fontSize: "13px",
                                     borderRadius: "5px",
                                     border: "1px solid #ccc",
                                     textAlign: "center",
+                                   
                                 }}
                             />
 
