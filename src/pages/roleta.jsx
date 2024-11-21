@@ -229,9 +229,9 @@ export const RoletaPage = () => {
 
             <div>
                 {showRoleta && (
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", justifyContent: "center", width: "100%" }}>
 
-                        <div>
+                        <div style={{display: "flex", justifyContent: "center"}}>
                             <input
                                 type="number"
                                 placeholder="Insira um número"
