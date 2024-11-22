@@ -35,7 +35,15 @@ export const AdminPage = () => {
                         type="number"
                         placeholder="Digite o número sorteado"
                         value={adminNumero}
-                        onChange={(e) => setAdminNumero(e.target.value)}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '' || (parseInt(value, 10) >= 1 && parseInt(value, 10) <= 35)) {
+                                setAdminNumero(value);
+                            } else if (parseInt(value, 10) < 1) {
+                                setNumeroInserido(1);
+                            }
+                        }}
+                        max={35}
                         style={{ width: '100%', padding: '8px', fontSize: '16px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }}
                     />
                 </div>
